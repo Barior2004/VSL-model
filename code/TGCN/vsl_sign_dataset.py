@@ -6,6 +6,7 @@ from torch.utils.data import Dataset
 class Sign_Dataset(Dataset):
     def __init__(self, root_dir, split='train', num_samples=50):
         # root_dir is expected to be e.g. /kaggle/input/.../keypoints_splited
+        self.split = split
         self.data_dir = os.path.join(root_dir, split)
         self.num_samples = num_samples
         
@@ -53,6 +54,10 @@ class Sign_Dataset(Dataset):
             
         # TGCN expects [76, num_samples * 3]
         data = data.transpose(1, 0, 2).reshape(76, -1)
+        
+        if self.split == 'test':
+            # Nhân bản 4 lần để khớp với biến num_copies = 4 bị hardcode trong train_utils.py
+            data = np.concatenate([data, data, data, data], axis=-1)
         
         video_id = os.path.basename(video_path)
         return torch.FloatTensor(data), label, video_id
