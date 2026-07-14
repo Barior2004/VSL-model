@@ -204,4 +204,8 @@ if __name__ == '__main__':
 
     configs = Config(config_file)
     print(root, train_split)
+    
+    # Tự động tạo thư mục checkpoints
+    os.makedirs(save_model, exist_ok=True)
+    
     run(configs=configs, mode=mode, root=root, save_model=save_model, train_split=train_split, weights=weights)

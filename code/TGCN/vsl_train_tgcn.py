@@ -117,6 +117,10 @@ if __name__ == "__main__":
     
     configs = Config(config_file)
 
+    # Tự động tạo thư mục output và checkpoints nếu chưa có trên Kaggle
+    os.makedirs('output', exist_ok=True)
+    os.makedirs(os.path.join('checkpoints', subset), exist_ok=True)
+
     logging.basicConfig(filename='output/{}.log'.format(os.path.basename(config_file)[:-4]), level=logging.DEBUG, filemode='w+')
 
     logging.info('Calling main.run()')
