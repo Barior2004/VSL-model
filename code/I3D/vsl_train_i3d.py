@@ -197,7 +197,10 @@ if __name__ == '__main__':
 
     # weights = 'archived/asl2000/FINAL_nslt_2000_iters=5104_top1=32.48_top5=57.31_top10=66.31.pt'
     weights = None
-    config_file = 'configfiles/vsl_472.ini'
+    
+    # Dùng đường dẫn tuyệt đối động
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config_file = os.path.join(script_dir, 'configfiles', 'vsl_472.ini')
 
     configs = Config(config_file)
     print(root, train_split)

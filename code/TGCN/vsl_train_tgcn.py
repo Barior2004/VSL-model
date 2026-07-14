@@ -110,7 +110,11 @@ if __name__ == "__main__":
 
     split_file = None
     pose_data_root = '/kaggle/input/vsl-vietnamese-sign-language-cropped/processed_augmented/processed_augmented/keypoints_splited/'
-    config_file = os.path.join(root, 'code/TGCN/configs/vsl_472.ini')
+    
+    # Dùng đường dẫn tuyệt đối động để luôn tìm thấy file config dù đứng ở đâu
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config_file = os.path.join(script_dir, 'configs', 'vsl_472.ini')
+    
     configs = Config(config_file)
 
     logging.basicConfig(filename='output/{}.log'.format(os.path.basename(config_file)[:-4]), level=logging.DEBUG, filemode='w+')
