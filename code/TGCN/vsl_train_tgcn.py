@@ -109,7 +109,7 @@ if __name__ == "__main__":
     subset = 'vsl472'
 
     split_file = None
-    pose_data_root = '/kaggle/input/vsl-vietnamese-sign-language-cropped/processed_augmented/processed_augmented/keypoints_splited/'
+    pose_data_root = '/kaggle/input/datasets/nguyenanfms/vsl-vietnamese-sign-language-v2/processed_augmented/processed_augmented/keypoints_splited'
     
     # Dùng đường dẫn tuyệt đối động để luôn tìm thấy file config dù đứng ở đâu
     script_dir = os.path.dirname(os.path.abspath(__file__))
