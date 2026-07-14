@@ -54,4 +54,5 @@ class Sign_Dataset(Dataset):
         # TGCN expects [76, num_samples * 3]
         data = data.transpose(1, 0, 2).reshape(76, -1)
         
-        return torch.FloatTensor(data), label
+        video_id = os.path.basename(video_path)
+        return torch.FloatTensor(data), label, video_id
