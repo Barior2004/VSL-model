@@ -1,4 +1,5 @@
 import os
+import sys
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -44,14 +45,18 @@ if __name__ == "__main__":
     config_file = os.path.join(script_dir, 'configs', 'vsl_472.ini')
     configs = Config(config_file)
     
-    # 1. Tìm file weights .pth mới nhất trong thư mục
-    ckpt_dir = os.path.join('checkpoints', 'vsl472')
-    pt_files = glob.glob(os.path.join(ckpt_dir, '*.pth'))
-    if not pt_files:
-        print("Không tìm thấy file .pth nào! Vui lòng kiểm tra lại thư mục checkpoints/vsl472/")
-        exit()
+    if len(sys.argv) > 1:
+        best_model_path = sys.argv[1]
+    else:
+        # 1. Tìm file weights .pth mới nhất trong thư mục
+        ckpt_dir = os.path.join('checkpoints', 'vsl472')
+        pt_files = glob.glob(os.path.join(ckpt_dir, '*.pth'))
+        if not pt_files:
+            print("Không tìm thấy file .pth nào! Vui lòng truyền đường dẫn trực tiếp: python plot.py <đường_dẫn>")
+            exit()
+            
+        best_model_path = max(pt_files, key=os.path.getctime)
         
-    best_model_path = max(pt_files, key=os.path.getctime)
     print(f"Loading weights from: {best_model_path}")
     
     # 2. Khởi tạo dataset
