@@ -1,5 +1,6 @@
 import os
 import argparse
+import gc
 
 import torch
 import torch.nn as nn
@@ -185,6 +186,10 @@ def run(configs,
                                                                                                               ))
 
                 scheduler.step(tot_loss * num_steps_per_update / num_iter)
+            
+            # Ép dọn rác RAM và VRAM sau mỗi Phase
+            gc.collect()
+            torch.cuda.empty_cache()
 
 
 if __name__ == '__main__':
