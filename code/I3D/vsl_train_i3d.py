@@ -126,10 +126,12 @@ def run(configs,
                 inputs = inputs.cuda()
                 t = inputs.size(2)
                 labels = labels.cuda()
+                # Expand labels to match time dimension [B, C, T]
+                labels = labels.unsqueeze(2).repeat(1, 1, t)
 
                 per_frame_logits = i3d(inputs, pretrained=False)
                 # upsample to input size
-                per_frame_logits = F.upsample(per_frame_logits, t, mode='linear')
+                per_frame_logits = F.interpolate(per_frame_logits, t, mode='linear')
 
                 # compute localization loss
                 loc_loss = F.binary_cross_entropy_with_logits(per_frame_logits, labels)
