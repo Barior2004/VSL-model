@@ -1,5 +1,6 @@
 import logging
 import os
+import gc
 
 import numpy as np
 import torch
@@ -87,6 +88,10 @@ def run(split_file, pose_data_root, configs, save_model_to=None):
         np.save('output/epoch_training_scores.npy', np.array(epoch_train_scores))
         np.save('output/epoch_test_loss.npy', np.array(epoch_val_losses))
         np.save('output/epoch_test_score.npy', np.array(epoch_val_scores))
+        
+        # Ép Python dọn dẹp rác (Garbage Collection) sau mỗi Epoch để tránh đầy RAM trên Kaggle
+        gc.collect()
+        torch.cuda.empty_cache()
 
         if val_score[0] > best_test_acc:
             best_test_acc = val_score[0]
