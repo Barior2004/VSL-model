@@ -195,7 +195,7 @@ def run(configs,
 if __name__ == '__main__':
     # WLASL setting
     mode = 'rgb'
-    root = '/kaggle/input/vsl-vietnamese-sign-language-cropped/processed_augmented/processed_augmented/frame_splited'
+    root = '/kaggle/input/datasets/nguyenanfms/vsl-vietnamese-sign-language-v2/processed_augmented/processed_augmented/frame_splited'
 
     save_model = 'checkpoints/'
     train_split = ''
