@@ -187,6 +187,12 @@ def run(configs,
                         })
                         
                         tot_loss = tot_loc_loss = tot_cls_loss = 0.
+                        
+                    # --- BẢO HIỂM COLAB: Lưu file mỗi 1000 bước (tầm 40 phút) ---
+                    if steps > 0 and steps % 1000 == 0 and phase == 'train':
+                        safe_model_name = save_model + "nslt_" + str(num_classes) + "_SAFE_STEP_" + str(steps) + '.pt'
+                        torch.save(i3d.module.state_dict(), safe_model_name)
+                        print(f"\\n[BẢO HIỂM] Đã cất an toàn file {safe_model_name} vào Google Drive!")
                     
                     # Cứu mạng Kaggle Timeout: Phanh gấp ngay khi đủ MAX_STEPS!
                     if steps >= configs.max_steps:
