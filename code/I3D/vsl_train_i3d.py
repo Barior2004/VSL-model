@@ -1,6 +1,7 @@
 import os
 import argparse
 import gc
+import wandb
 
 import torch
 import torch.nn as nn
@@ -45,6 +46,11 @@ def run(configs,
         save_model='',
         weights=None):
     print(configs)
+
+    # Khởi tạo wandb
+    wandb.login(key="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")
+    wandb.init(project="I3D model", name="I3D-VSL-Training")
+    wandb.config.update({"batch_size": configs.batch_size, "learning_rate": configs.init_lr})
 
     # setup dataset
     train_transforms = transforms.Compose([videotransforms.RandomCrop(224),
@@ -169,6 +175,17 @@ def run(configs,
                                                                                                                  tot_cls_loss / (10 * num_steps_per_update),
                                                                                                                  tot_loss / 10,
                                                                                                                  acc))
+                        
+                        # Ghi log Train vào Wandb
+                        wandb.log({
+                            "Train/Total_Loss": tot_loss / 10,
+                            "Train/Loc_Loss": tot_loc_loss / (10 * num_steps_per_update),
+                            "Train/Cls_Loss": tot_cls_loss / (10 * num_steps_per_update),
+                            "Train/Accuracy": acc,
+                            "Step": steps,
+                            "Epoch": epoch
+                        })
+                        
                         tot_loss = tot_loc_loss = tot_cls_loss = 0.
                     
                     # Cứu mạng Kaggle Timeout: Phanh gấp ngay khi đủ MAX_STEPS!
@@ -191,6 +208,16 @@ def run(configs,
                                                                                                               (tot_loss * num_steps_per_update) / num_iter,
                                                                                                               val_score
                                                                                                               ))
+                                                                                                              
+                # Ghi log Validation vào Wandb
+                wandb.log({
+                    "Val/Total_Loss": (tot_loss * num_steps_per_update) / num_iter,
+                    "Val/Loc_Loss": tot_loc_loss / num_iter,
+                    "Val/Cls_Loss": tot_cls_loss / num_iter,
+                    "Val/Accuracy": val_score,
+                    "Step": steps,
+                    "Epoch": epoch
+                })
 
                 scheduler.step(tot_loss * num_steps_per_update / num_iter)
             
@@ -214,7 +241,10 @@ if __name__ == '__main__':
     else:
         root = '/kaggle/input/datasets/nguyenanfms/vsl-vietnamese-sign-language-v2/processed_augmented/processed_augmented/frame_splited'
 
-    save_model = 'checkpoints/'
+    if args.save_model:
+        save_model = args.save_model
+    else:
+        save_model = 'checkpoints/'
     train_split = ''
 
     # weights = 'archived/asl2000/FINAL_nslt_2000_iters=5104_top1=32.48_top5=57.31_top10=66.31.pt'
