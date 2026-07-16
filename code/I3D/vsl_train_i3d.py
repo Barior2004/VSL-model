@@ -170,6 +170,11 @@ def run(configs,
                                                                                                                  tot_loss / 10,
                                                                                                                  acc))
                         tot_loss = tot_loc_loss = tot_cls_loss = 0.
+                    
+                    # Cứu mạng Kaggle Timeout: Phanh gấp ngay khi đủ MAX_STEPS!
+                    if steps >= configs.max_steps:
+                        print(f'\\n[BÁO ĐỘNG] Đã đạt giới hạn an toàn {configs.max_steps} bước! Đang phanh khẩn cấp để lưu file...')
+                        break
             if phase == 'test':
                 val_score = float(np.trace(confusion_matrix)) / np.sum(confusion_matrix)
                 if val_score > best_val_score or epoch % 2 == 0:
@@ -192,12 +197,22 @@ def run(configs,
             # Ép dọn rác RAM và VRAM sau mỗi Phase
             gc.collect()
             torch.cuda.empty_cache()
+            
+        # Kiểm tra vòng lặp ngoài cùng để ngắt hẳn chương trình thành công
+        if steps >= configs.max_steps:
+            print("Đã hoàn thành an toàn! Máy chủ Kaggle sẽ đóng gói và trả kết quả ngay bây giờ.")
+            import sys
+            sys.exit(0)
 
 
 if __name__ == '__main__':
     # WLASL setting
     mode = 'rgb'
-    root = '/kaggle/input/datasets/nguyenanfms/vsl-vietnamese-sign-language-v2/processed_augmented/processed_augmented/frame_splited'
+    
+    if args.root:
+        root = args.root
+    else:
+        root = '/kaggle/input/datasets/nguyenanfms/vsl-vietnamese-sign-language-v2/processed_augmented/processed_augmented/frame_splited'
 
     save_model = 'checkpoints/'
     train_split = ''
